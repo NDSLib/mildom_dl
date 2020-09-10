@@ -7,6 +7,7 @@ from tqdm import tqdm
 import os
 from dataclasses import dataclass
 import re
+import shutil
 
 # https://www.mildom.com/playback/10738086?v_id=10738086-1598025891
 
@@ -48,6 +49,7 @@ class MildomDL():
 
     def getm3u8(self):
      # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10738086/10738086-1598025891/transcode/raw/10738086-1598025891-0_raw.m3u8
+     # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10658167/10658167-1599743721/transcode/raw/10658167-1599743721-0_raw.m3u8
         base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw.m3u8"
         url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
         with urllib.request.urlopen(url) as response:
@@ -60,7 +62,10 @@ class MildomDL():
             return
         if os.path.isfile(path):
             raise Exception("The file already exists.,ファイルが既に存在します。")
+        isAllVideo = False
         if end is None:
+            if start == 0:
+                isAllVideo = True
             m3u8 = self.getm3u8()
             last_ts = m3u8.split("\n")[-3] * 2
             ls = re.search(r"raw",last_ts).span()[1]
@@ -72,7 +77,6 @@ class MildomDL():
         start_time = start // 4
         end_time   = end //4
 
-
         ts_url = [base_ts_url.format(user_id=self.user_id,video_id=self.video_id,ts_id=ts_id) for ts_id in range(start_time,end_time+1)]
 
         tmp_dir = tempfile.TemporaryDirectory()
@@ -81,7 +85,13 @@ class MildomDL():
         for index,url in tqdm(enumerate(ts_url)):
             filename = tmp_dir_name + '/'+ str(index) + ".ts"
             ts_files.append(filename)
-            urllib.request.urlretrieve(url, filename)
+            #urllib.request.urlretrieve(url, filename)
+            try:
+                data = urllib.request.urlopen(url, timeout=10).read()
+                with open(filename, mode="wb") as f:
+                    f.write(data)
+            except:
+                pass
 
         m3u8_dir = tmp_dir_name + "/tmp.txt"
         with open(tmp_dir_name + "/tmp.txt", "w") as fp:
@@ -90,8 +100,12 @@ class MildomDL():
 
         download_filename = tmp_dir_name + "/v.mp4"
         ffmpeg.input(m3u8_dir, f="concat", safe=0).output(download_filename, c="copy").run(capture_stdout=True, capture_stderr=True)    
-        cut_lasttime = end - start
-        ffmpeg.input(download_filename).output(path,t=cut_lasttime,ss=0).run()
+        if isAllVideo:
+            shutil.move(download_filename,path)
+        else:
+            cut_lasttime = end - start
+            ffmpeg.input(download_filename).output(path,t=cut_lasttime,ss=0).run()
+        tmp_dir.cleanup()
         print("Done!")
 
     def _videocut(video,last):
