@@ -104,6 +104,7 @@ class MildomDL():
                     f.write(data)
             except urllib.request.HTTPError:
                 print("VIDEO DOWNLOAD FORBIDDEN ERROR")
+        print(ts_files)
 
         m3u8_dir = tmp_dir_name + "/tmp.txt"
         with open(tmp_dir_name + "/tmp.txt", "w") as fp:

@@ -1,0 +1,2 @@
+ffmpeg-python==0.2.0
+tqdm==4.48.2
