@@ -6,12 +6,13 @@ this project is currently under development.
 ## TODO
 - [x] archive download
 - [ ] live download
+- [ ] command support
 
 ## Usage
 
 **※未対応**
 ```bash
-$ mildom_dl https://www.mildom.com/playback/10738086?v_id=10738086-1598025891
+$ mildom_dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -o out.mp4
 ```
 
 or 
@@ -27,7 +28,7 @@ mdl.download("test.mp4")
 
 **※未対応**
 ```bash
-$ mildom_dl https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -s 30 -e 530
+$ mildom_dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -s 30 -e 530 -o out.mp4
 ```
 or 
 ```py

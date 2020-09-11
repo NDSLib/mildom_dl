@@ -50,27 +50,39 @@ class MildomDL():
     def getm3u8(self):
      # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10738086/10738086-1598025891/transcode/raw/10738086-1598025891-0_raw.m3u8
      # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10658167/10658167-1599743721/transcode/raw/10658167-1599743721-0_raw.m3u8
-        base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw.m3u8"
-        url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
-        with urllib.request.urlopen(url) as response:
-            return response.read().decode()
+        try:
+            base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw.m3u8"
+            url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
+            with urllib.request.urlopen(url) as response:
+                return response.read().decode()
+        except urllib.request.HTTPError:
+            base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/origin/raw/{video_id}_raw.m3u8"
+            url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
+            with urllib.request.urlopen(url) as response:
+                return response.read().decode()
+
 
     def download(self,path="aaaj:.mp4",start=0,end=None):
         base_ts_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw{ts_id}.ts"
+        base_ts_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/origin/raw/{video_id}_raw-0000.ts"
         if self.isLive:
             print("live動画は対応していません。")
             return
         if os.path.isfile(path):
             raise Exception("The file already exists.,ファイルが既に存在します。")
         isAllVideo = False
+        ts_paths = []
         if end is None:
             if start == 0:
                 isAllVideo = True
             m3u8 = self.getm3u8()
-            last_ts = m3u8.split("\n")[-3] * 2
+            m3u8_splited = m3u8.split("\n")
+            last_ts = m3u8.split("\n")[-3]
+            print(last_ts)
             ls = re.search(r"raw",last_ts).span()[1]
             le = re.search(r".ts",last_ts).span()[0]
             end = str(ls)+str(le)
+            print(end)
             end = int(end)
 
         #  4秒 ts
@@ -90,8 +102,8 @@ class MildomDL():
                 data = urllib.request.urlopen(url, timeout=10).read()
                 with open(filename, mode="wb") as f:
                     f.write(data)
-            except:
-                pass
+            except urllib.request.HTTPError:
+                print("VIDEO DOWNLOAD FORBIDDEN ERROR")
 
         m3u8_dir = tmp_dir_name + "/tmp.txt"
         with open(tmp_dir_name + "/tmp.txt", "w") as fp:
