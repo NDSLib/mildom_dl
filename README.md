@@ -18,7 +18,7 @@ $ pip3 install git+https://github.com/NDSLib/mildom_dl
 
 
 ```bash
-$ mildom_dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -o out.mp4
+$ mildom-dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -o out.mp4
 ```
 
 or 
@@ -34,7 +34,7 @@ mdl.download("test.mp4")
 
 
 ```bash
-$ mildom_dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -s 30 -e 530 -o out.mp4
+$ mildom-dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -s 30 -e 530 -o out.mp4
 ```
 or 
 ```py
