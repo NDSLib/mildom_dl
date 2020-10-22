@@ -1,8 +1,0 @@
-LICENSE
-README.md
-setup.cfg
-setup.py
-mildom_dl/mildom_dl.egg-info/PKG-INFO
-mildom_dl/mildom_dl.egg-info/SOURCES.txt
-mildom_dl/mildom_dl.egg-info/dependency_links.txt
-mildom_dl/mildom_dl.egg-info/top_level.txt
