@@ -1,22 +1,15 @@
 # Mildom_dl
+開発中です。
 
-this project is currently under development.
+(日本語/[英語](https://github.com/NDSLib/mildom_dl/README.md))
 
-([日本語](https://github.com/NDSLib/mildom_dl/README-JA.md)/English)
-
-## How to install mildom_dl
+## インストール方法
 ```bash
 $ pip3 install git+https://github.com/NDSLib/mildom_dl
 ```
 
 
-## TODO
-- [x] archive download
-- [ ] live download
-- [x] command support
-- [ ] Resolution Change support
-
-## Usage
+## 使い方
 
 
 ```bash
@@ -29,14 +22,15 @@ or
 from mildom_dl.mildomDL import MildomDL
 
 mdl = MildomDL(url="https://www.mildom.com/playback/10738086?v_id=10738086-1598025891")
-mdl.download("test.mp4")
+mdl.download("test.mp4")                                           
 ```
 
-### 切り抜いて保存
+### 動画を切り抜いて保存
+
 
 args :
-    -s : start（seconds)
-    -e : end (seconds)
+    -s : 開始時間（秒)
+    -e : 終了時間 (秒)
 
 
 ```bash
@@ -48,10 +42,11 @@ or
 mdl.download("test.mp4",start=30,end=530)
 ```
 
-# args
+
+# 引数
 
 -u URL
--o output filename
+-o 出力先ファイル名
 
--s start time (seconds)
--e end time (seconds)
+-s 開始時間(指定しなくてもおｋ)
+-e 終了時間(指定しなくてもおｋ)
