@@ -1,7 +1,7 @@
 # Mildom_dl
 開発中です。
 
-(日本語/[英語](https://github.com/NDSLib/mildom_dl/README.md))
+(日本語/[英語](https://github.com/NDSLib/mildom_dl/blob/master/README.md))
 
 ## インストール方法
 ```bash
@@ -44,9 +44,10 @@ mdl.download("test.mp4",start=30,end=530)
 
 
 # 引数
-
+```
 -u URL
 -o 出力先ファイル名
 
 -s 開始時間(指定しなくてもおｋ)
 -e 終了時間(指定しなくてもおｋ)
+```

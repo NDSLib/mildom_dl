@@ -2,7 +2,7 @@
 
 this project is currently under development.
 
-([日本語](https://github.com/NDSLib/mildom_dl/README-JA.md)/English)
+([日本語](https://github.com/NDSLib/mildom_dl/blob/master/README-JA.md)/English)
 
 ## How to install mildom_dl
 ```bash
@@ -49,9 +49,10 @@ mdl.download("test.mp4",start=30,end=530)
 ```
 
 # args
-
+```
 -u URL
 -o output filename
 
 -s start time (seconds)
 -e end time (seconds)
+```
