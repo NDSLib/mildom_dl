@@ -1,7 +1,7 @@
 # Mildom_dl
 開発中です。
 
-(日本語/[英語](https://github.com/NDSLib/mildom_dl/blob/master/README.md))
+(日本語/[English](https://github.com/NDSLib/mildom_dl/blob/master/README.md))
 
 ## インストール方法
 ```bash
