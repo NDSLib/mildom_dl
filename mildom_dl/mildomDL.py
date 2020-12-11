@@ -1,4 +1,5 @@
 import ffmpeg
+import json
 # from ffmpy import FFmpeg
 import tempfile
 import urllib.request
@@ -11,11 +12,13 @@ import shutil
 
 # https://www.mildom.com/playback/10738086?v_id=10738086-1598025891
 
+VIDEO_CONTENT_BASE_URL = "https://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id="
+
 class MildomDL():
     def __init__(self,url):
         self.url = url
         if not self.isMildomURL(url):
-            raise Exception("おっと、これはミルダムのURLじゃないみたいだ。")
+            raise Exception("A URL other than Mildom has been detected.")
 
         self.isLive = False
 
@@ -27,19 +30,38 @@ class MildomDL():
         parsed_url = urlparse(url)
         if parsed_url.netloc == "www.mildom.com":
              return True
+        return False
 
 
     def info(self):
         if self.isLive:
             pass
         else:
-            useridS = re.search(r"playback/", self.url).span()[1]
-            aida = re.search(r"\?v_id=", self.url).span()
-            useridE = aida[0]
-            videoidS = aida[1]
-            user_id = self.url[useridS:useridE]
-            # FIXME urlのラストが"/"だった場合
-            video_id = self.url[videoidS::]
+            try:
+                useridS = re.search(r"playback/", self.url).span()[1]
+            except AttributeError:
+                self.isLive = True
+            #aida = re.search(r"\?v_id=", self.url).span()
+            #useridE = aida[0]
+            #videoidS = aida[1]
+            #user_id = self.url[useridS:useridE]
+            #video_id = self.url[videoidS::]
+            #if video_id[-1] == "/":
+            #    video_id = video_id[:-1]
+
+            #video_content_url = VIDEO_CONTENT_BASE_URL + video_id
+
+            #response = urllib.request.urlopen(video_content_url)
+            #json_str = response.read().decode()
+            #jsondata = json.loads(json_str)
+
+            itms = self.url.split("/")
+            if itms[-1] == "":
+                itms.pop(-1)
+            video_id = itms[-1]
+            user_id  = itms[-2]
+
+            
 
             return VideoData(user_id=user_id,video_id=video_id)
 
@@ -69,85 +91,37 @@ class MildomDL():
 
 
     def download(self,path="aaaj:.mp4",start=0,end=None):
-        base_ts_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw{ts_id}.ts"
-        base2_ts_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/origin/raw/{video_id}_raw-{ts_id}.ts"
+        if os.path.isfile(path):
+            raise Exception("The file already exists.,ファイルが既に存在します。")
+
         if self.isLive:
             print("live動画は対応していません。")
             return
-        if os.path.isfile(path):
-            raise Exception("The file already exists.,ファイルが既に存在します。")
-        isAllVideo = False
-        ts_paths = []
-        if end is None:
-            if start == 0:
-                isAllVideo = True
-            m3u8 = self.getm3u8()
-            m3u8_splited = m3u8.split("\n")
-            last_ts = m3u8.split("\n")[-3]
-            print(last_ts)
-            ls = re.search(r"raw",last_ts).span()[1]
-            le = re.search(r".ts",last_ts).span()[0]
-            end = str(ls)+str(le)
-            print(end)
-            end = int(end)
-
-        #  4秒 ts
-        start_time = start // 4
-        end_time   = end //4
-
-        ts_url = [base_ts_url.format(user_id=self.user_id,video_id=self.video_id,ts_id=ts_id) for ts_id in range(start_time,end_time+1)]
-
-        tmp_dir = tempfile.TemporaryDirectory()
-        tmp_dir_name = tmp_dir.name
-        ts_files = []
-        for index,url in tqdm(enumerate(ts_url)):
-            filename = tmp_dir_name + '/'+ str(index) + ".ts"
-            ts_files.append(filename)
-            #urllib.request.urlretrieve(url, filename)
-            isTS2 = False
-            try:
-                if isTS2:
-                    urllib.request.HTTPError()
-                data = urllib.request.urlopen(url, timeout=10).read()
-                with open(filename, mode="wb") as f:
-                    f.write(data)
-            except urllib.request.HTTPError as e:
-                print("VIDEO DOWNLOAD FORBIDDEN ERROR",e)
-                isTS2 = True
-                #fs = re.search(r"transcode",url).span()
-                #print(url)
-                #orgnurl = url[0:fs[0]] + "origin" + url[fs[1]::]
-                #oid_pt = re.search(r"-0_raw"+str(index),url).span()[1],re.search(r".ts",url).span()[0]
-                oid = "0"*(4 - len(str(index))) + str(index)
-                #print(oid,index)
-                #uurl = orgnurl[0:oid_pt[0]] + oid + orgnurl[oid_pt[1]::] + ".ts"
-
-                nurl = base2_ts_url.format(user_id=self.user_id,video_id=self.video_id,ts_id=oid)
-                data = urllib.request.urlopen(nurl, timeout=10).read()
-                with open(filename, mode="wb") as f:
-                    f.write(data)
-                print(nurl)
-                print(url)
-        print(ts_files)
-
-        m3u8_dir = tmp_dir_name + "/tmp.txt"
-        with open(tmp_dir_name + "/tmp.txt", "w") as fp:
-            lines = [f"file '{line}'" for line in ts_files]
-            fp.write("\n".join(lines))
-
-        download_filename = tmp_dir_name + "/v.mp4"
-        ffmpeg.input(m3u8_dir, f="concat", safe=0).output(download_filename, c="copy").run(capture_stdout=False, capture_stderr=False)    
-        if isAllVideo:
-            shutil.move(download_filename,path)
         else:
-            print(download_filename)
-            #from time import sleep
-            #sleep(1000)
-            
+            self.__archive_download(path)
+
+        if isAllVideo:
+            #shutil.move(download_filename,path)
+            return
+        else:
             cut_lasttime = end - start
             ffmpeg.input(download_filename).output(path,t=cut_lasttime,ss=0).run(capture_stdout=False, capture_stderr=False)
-        tmp_dir.cleanup()
         print("Done!")
+
+    def __live_download(self):
+        pass
+
+    def __archive_download(self, path):
+        url = f"http://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id={self.video_id}"
+        req = urllib.request.Request(url)
+        with urllib.request.urlopen(req) as res:
+            body = json.load(res)
+        v_url = body["body"]["playback"]["source_part_url"][0]["url"]
+
+        urllib.request.urlretrieve(v_url, path)
+
+
+        
 
     def _videocut(video,last):
         pass
