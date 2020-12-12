@@ -94,6 +94,9 @@ class MildomDL():
         if os.path.isfile(path):
             raise Exception("The file already exists.,ファイルが既に存在します。")
 
+        if end is None and start == 0:
+            isAllVideo = True
+
         if self.isLive:
             print("live動画は対応していません。")
             return
@@ -117,6 +120,7 @@ class MildomDL():
         with urllib.request.urlopen(req) as res:
             body = json.load(res)
         v_url = body["body"]["playback"]["source_part_url"][0]["url"]
+        print(v_url)
 
         urllib.request.urlretrieve(v_url, path)
 
