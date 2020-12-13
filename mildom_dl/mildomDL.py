@@ -10,9 +10,6 @@ from dataclasses import dataclass
 import re
 import shutil
 
-# https://www.mildom.com/playback/10738086?v_id=10738086-1598025891
-
-VIDEO_CONTENT_BASE_URL = "https://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id="
 
 class MildomDL():
     def __init__(self,url):
@@ -69,24 +66,24 @@ class MildomDL():
     def get_title(self):
         return "video"
 
-    def getm3u8(self):
-     # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10738086/10738086-1598025891/transcode/raw/10738086-1598025891-0_raw.m3u8
-     # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10658167/10658167-1599743721/transcode/raw/10658167-1599743721-0_raw.m3u8
-        try:
-            base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw.m3u8"
-            url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
-            with urllib.request.urlopen(url) as response:
-                print("m3u8 getted")
-                return response.read().decode()
-        except urllib.request.HTTPError as e:
-            print("NOMAL LINK ERROR",e)
-            base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/origin/raw/{video_id}_raw.m3u8"
-            url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
-            with urllib.request.urlopen(url) as response:
-                return response.read().decode()
-        except Exception as e:
-            print(e)
-            exit()
+    #def getm3u8(self):
+    # # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10738086/10738086-1598025891/transcode/raw/10738086-1598025891-0_raw.m3u8
+    # # https://d3ooprpqd2179o.cloudfront.net/vod/jp/10658167/10658167-1599743721/transcode/raw/10658167-1599743721-0_raw.m3u8
+    #    try:
+    #        base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/transcode/raw/{video_id}-0_raw.m3u8"
+    #        url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
+    #        with urllib.request.urlopen(url) as response:
+    #            print("m3u8 getted")
+    #            return response.read().decode()
+    #    except urllib.request.HTTPError as e:
+    #        print("NOMAL LINK ERROR",e)
+    #        base_m3u8_url = "https://d3ooprpqd2179o.cloudfront.net/vod/jp/{user_id}/{video_id}/origin/raw/{video_id}_raw.m3u8"
+    #        url = base_m3u8_url.format(user_id=self.user_id,video_id=self.video_id)
+    #        with urllib.request.urlopen(url) as response:
+    #            return response.read().decode()
+    #    except Exception as e:
+    #        print(e)
+    #        exit()
             
 
 
@@ -115,13 +112,14 @@ class MildomDL():
         pass
 
     def __archive_download(self, path):
+        # FIXME ======================
         url = f"http://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id={self.video_id}"
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req) as res:
             body = json.load(res)
-        v_url = body["body"]["playback"]["source_part_url"][0]["url"]
-        print(v_url)
+        # ==============================
 
+        v_url = body["body"]["playback"]["source_part_url"][0]["url"]
         urllib.request.urlretrieve(v_url, path)
 
 
