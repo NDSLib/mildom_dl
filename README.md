@@ -12,7 +12,7 @@ $ pip3 install git+https://github.com/NDSLib/mildom_dl
 
 ## TODO
 - [x] archive download
-- [ ] live download
+- [x] live download
 - [x] command support
 - [ ] Resolution Change support
 
@@ -32,7 +32,7 @@ mdl = MildomDL(url="https://www.mildom.com/playback/10738086?v_id=10738086-15980
 mdl.download("test.mp4")
 ```
 
-### 切り抜いて保存
+### 切り抜いて保存(not working)
 
 args :
     -s : start（seconds)
