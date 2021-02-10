@@ -12,7 +12,6 @@ def main():
 
 
     args = parser.parse_args()
-    print(args)
     mdl = MildomDL(url=args.url)
     start = args.start
     if start == None:

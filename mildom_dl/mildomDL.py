@@ -132,23 +132,25 @@ class MildomDL:
         try:
             (ffmpeg
              .input(m3u8URL)
-             .output(tmp_dir_name + f"/{path}", preset='fast', movflags="frag_keyframe+empty_moov", c="copy",
+             .output(tmp_dir_name + f"/test.mp4", preset='fast', movflags="frag_keyframe+empty_moov", c="copy",
                      **{"bsf:a": "aac_adtstoasc"}, pix_fmt='yuv420p', loglevel="quiet")
-             .run(capture_stdout=False, capture_stderr=False)
+             .run()
              )
         except KeyboardInterrupt:
             print("ctrl + C pressed")
             # FIXME: moovが欠けてるため、全部再生できない(VLCではいけた。) https://qiita.com/kichiki/items/c6ad1cda80c00810928d
         except Exception as e:
             print(e)
-        Logger.info("moving")
+        Logger.info(f"moving {tmp_dir_name}/{path} to {path}")
         (ffmpeg
-         .input(tmp_dir_name + f"/{path}")
+         .input(tmp_dir_name + f"/test.mp4")
          .output(path, c="copy", loglevel="quiet")
-         .run(capture_stdout=False, capture_stderr=False)
+         .run()
          )
-        print("Done!")
+        tmp_dir.cleanup()
+        Logger.info("Done!")
 
+    @animation.wait(("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"), text="Downloading  ", speed=0.1)
     def __archive_download(self, path):
         # FIXME ======================
         url = f"http://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id={self.video_id}"
@@ -159,6 +161,7 @@ class MildomDL:
 
         v_url = body["body"]["playback"]["source_url"]
         urllib.request.urlretrieve(v_url, path)
+        Logger.info("Done!")
 
     def _videocut(video, last):
         pass
