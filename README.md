@@ -1,58 +1,22 @@
-# Mildom_dl
+![uBuild Blocks](uploads/2018/06/21/theme.png)
 
-this project is currently under development.
+# uBuild Jekyll Theme
 
-([日本語](https://github.com/NDSLib/mildom_dl/blob/master/README-JA.md)/English)
+[View the announcement post on Forestry.io](https://forestry.io/blog/ubuild-a-new-theme-for-static-sites-using-blocks/#/)
 
-## How to install mildom_dl
-```bash
-$ pip3 install git+https://github.com/NDSLib/mildom_dl
-```
+`ubuild-jekyll` is a Jekyll theme designed to work with [Forestry](https://forestry.io/)'s [Blocks](https://forestry.io/blog/blocks-give-your-editors-the-power-to-build-pages/) feature.  This theme provides a set of page-level components and a pre-configured Forestry Blocks UI that will empower content editors to construct their own webpages.
 
+## Quick Start
 
-## TODO
-- [x] archive download
-- [x] live download
-- [x] command support
-- [ ] Resolution Change support
+[![Import this project into Forestry](https://assets.forestry.io/import-to-forestry.svg)](https://app.forestry.io/quick-start?repo=forestryio/ubuild-jekyll&provider=github&engine=jekyll)
 
-## Usage
+*This option is available for Github and Gitlab users only. If you use Bitbucket please use the Alternative Setup*
 
+## Alternative Setup
 
-```bash
-$ mildom-dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -o out.mp4
-```
+1. Fork this repo
+2. [Sign up for a free Forestry account](https://app.forestry.io/signup)
+3. [Import your repo](https://forestry.io/docs/quickstart/setup-site/#import-site-from-repo) as a new Jekyll project
 
-or 
+To use the page builder, select the **Page Builder** template when creating a new page.
 
-```py
-from mildom_dl.mildomDL import MildomDL
-
-mdl = MildomDL(url="https://www.mildom.com/playback/10738086?v_id=10738086-1598025891")
-mdl.download("test.mp4")
-```
-
-### 切り抜いて保存(not working)
-
-args :
-    -s : start（seconds)
-    -e : end (seconds)
-
-
-```bash
-$ mildom-dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -s 30 -e 530 -o out.mp4
-```
-or 
-```py
-...
-mdl.download("test.mp4",start=30,end=530)
-```
-
-# args
-```
--u URL
--o output filename
-
--s start time (seconds)
--e end time (seconds)
-```
