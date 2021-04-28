@@ -73,7 +73,7 @@ class MildomDL:
     def get_title(self):
         return "video"
 
-    def download(self, path="aaaj:.mp4", start=0, end=None, override=False):
+    def download(self, path="untitled.mp4", start=0, end=None, override=False):
         if override:
             os.remove(path)
         else:
@@ -153,14 +153,25 @@ class MildomDL:
     @animation.wait(("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"), text="Downloading  ", speed=0.1)
     def __archive_download(self, path):
         # FIXME ======================
-        url = f"http://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id={self.video_id}"
+        #url = f"http://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id={self.video_id}"
+        url = f"http://cloudac.mildom.com/nonolive/videocontent/playback/getPlaybackDetail?v_id={self.video_id}&__platform=web"
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req) as res:
             body = json.load(res)
         # ==============================
+        source_url = body["body"]["playback"].get("source_url")
+        if source_url:
+            Logger.info("source_url is None")
+            urllib.request.urlretrieve(source_url, path)
+        else:
+            video_link = body["body"]["playback"].get("video_link")
+            m3u8URL = video_link[-1]["url"]
+            (ffmpeg
+             .input(m3u8URL)
+             .output(path, vsync=2, loglevel="quiet")
+             .run()
+             )
 
-        v_url = body["body"]["playback"]["source_url"]
-        urllib.request.urlretrieve(v_url, path)
         Logger.info("Done!")
 
     def _videocut(video, last):
