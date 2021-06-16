@@ -5,6 +5,7 @@ this project is currently under development.
 ([日本語](https://github.com/NDSLib/mildom_dl/blob/master/README-JA.md)/English)
 
 ## How to install mildom_dl
+
 ```bash
 $ pip3 install git+https://github.com/NDSLib/mildom_dl
 ```
@@ -18,9 +19,14 @@ $ pip3 install git+https://github.com/NDSLib/mildom_dl
 
 ## Usage
 
-
+ video
 ```bash
 $ mildom-dl -u https://www.mildom.com/playback/10738086?v_id=10738086-1598025891 -o out.mp4
+```
+
+ live
+```bash
+$ mildom-dl -u https://www.mildom.com/10038177 -o out.mp4
 ```
 
 or 

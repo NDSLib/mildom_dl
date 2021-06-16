@@ -34,8 +34,8 @@ class MildomDL:
         self.user_id = info.user_id
         self.video_id = info.video_id
 
-        Logger.info("video_id: " + self.video_id)
-        Logger.info("user_id : " + self.user_id)
+        Logger.info("video_id : " + self.video_id)
+        Logger.info("user_id  : " + self.user_id)
 
     def is_mildom_url(self, url):
         parsed_url = urlparse(url)
@@ -112,6 +112,7 @@ class MildomDL:
         req = urllib.request.Request(url)
         with urllib.request.urlopen(req) as res:
             body = json.load(res)
+        #Logger.info(body)
         try:
             anchor_live = body['body']['playback']["author_info"]['anchor_live']
             if anchor_live != 11:
